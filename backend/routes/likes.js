@@ -2,68 +2,77 @@ const express = require("express");
 const router = express.Router();
 const pool = require("../db");
 
-// TOGGLE LIKE
+/* ================= LIKE / UNLIKE ================= */
 router.post("/", async (req, res) => {
   const { userId, songId } = req.body;
 
-  const check = await pool.query(
-    "SELECT * FROM likes WHERE user_id=$1 AND song_id=$2",
-    [userId, songId]
-  );
-
-  if (check.rows.length > 0) {
-    // UNLIKE
-    await pool.query(
-      "DELETE FROM likes WHERE user_id=$1 AND song_id=$2",
+  try {
+    const existing = await pool.query(
+      "SELECT 1 FROM likes WHERE user_id=$1 AND song_id=$2",
       [userId, songId]
     );
 
-    await pool.query(
-      "UPDATE songs SET like_count = like_count - 1 WHERE id=$1",
-      [songId]
-    );
+    if (existing.rows.length > 0) {
+      // UNLIKE
+      await pool.query(
+        "DELETE FROM likes WHERE user_id=$1 AND song_id=$2",
+        [userId, songId]
+      );
 
-    return res.json({ liked: false });
-  } else {
-    // LIKE
-    await pool.query(
-      "INSERT INTO likes (user_id, song_id) VALUES ($1,$2)",
-      [userId, songId]
-    );
+      return res.json({ liked: false });
+    } else {
+      // LIKE
+      await pool.query(
+        "INSERT INTO likes (user_id, song_id) VALUES ($1, $2)",
+        [userId, songId]
+      );
 
-    await pool.query(
-      "UPDATE songs SET like_count = like_count + 1 WHERE id=$1",
-      [songId]
-    );
-
-    return res.json({ liked: true });
+      return res.json({ liked: true });
+    }
+  } catch (err) {
+    console.error("Like error:", err);
+    res.status(500).json({ error: "Like failed" });
   }
 });
 
-// CHECK LIKE STATUS
-router.get("/:songId/:userId", async (req, res) => {
-  const { songId, userId } = req.params;
+/* ================= CHECK LIKE STATUS ================= */
+router.get("/check", async (req, res) => {
+  const { userId, songId } = req.query;
 
-  const result = await pool.query(
-    "SELECT * FROM likes WHERE user_id=$1 AND song_id=$2",
-    [userId, songId]
-  );
+  try {
+    const result = await pool.query(
+      "SELECT 1 FROM likes WHERE user_id=$1 AND song_id=$2",
+      [userId, songId]
+    );
 
-  res.json({ liked: result.rows.length > 0 });
+    res.json({ liked: result.rows.length > 0 });
+  } catch (err) {
+    console.error("Check like error:", err);
+    res.status(500).json({ error: "Check failed" });
+  }
 });
 
-// USER LIKED SONGS
+/* ================= USER'S LIKED SONGS ================= */
 router.get("/user/:userId", async (req, res) => {
   const { userId } = req.params;
 
-  const result = await pool.query(`
-    SELECT s.*
-    FROM songs s
-    JOIN likes l ON s.id = l.song_id
-    WHERE l.user_id = $1
-  `, [userId]);
+  try {
+    const result = await pool.query(
+      `
+      SELECT s.*
+      FROM likes l
+      JOIN songs s ON s.id = l.song_id
+      WHERE l.user_id = $1
+      ORDER BY l.id DESC
+      `,
+      [userId]
+    );
 
-  res.json(result.rows);
+    res.json(result.rows);
+  } catch (err) {
+    console.error("Fetch liked songs error:", err);
+    res.status(500).json({ error: "Fetch failed" });
+  }
 });
 
 module.exports = router;

@@ -2,19 +2,18 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Liked Songs</title>
+  <title>Search Songs</title>
   <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
 
-<!-- Sidebar (same as index.html) -->
+<!-- Sidebar -->
 <div class="sidebar">
   <h2 class="logo">🎵 MyMusic</h2>
   <ul>
     <li><a href="index.html">Home</a></li>
-    <li><a href="search.html">Search</a></li>
-    <li class="active"><a href="likes.html">Liked Songs</a></li>
-    <li><a href="admin.html">Admin</a></li>
+        <li class="active"><a href="search.html">Search</a></li>
+    <li><a href="likes.html">Liked Songs</a></li>
   </ul>
 </div>
 
@@ -26,16 +25,45 @@
     <input
       type="text"
       id="searchInput"
-      placeholder="Search liked songs..."
+      placeholder="Search songs, artist..."
     >
   </div>
 
-  <h2>❤️ Liked Songs</h2>
+  <!-- ALL SONGS -->
+  <h2>🎧 All Songs</h2>
+  <div class="song-list" id="allSongs"></div>
 
-  <!-- Songs -->
-  <div class="song-list"></div>
+  <!-- CATEGORIES -->
+  <h2>🔥 Browse Categories</h2>
+
+  <div class="category-grid">
+
+    <div class="category-card">
+      <img src="images/trending.jpg">
+      <p>Trending</p>
+    </div>
+
+    <div class="category-card">
+      <img src="images/romantic.jpg">
+      <p>Romantic</p>
+    </div>
+
+    <div class="category-card">
+      <img src="images/bollywood.jpg">
+      <p>Bollywood</p>
+    </div>
+
+    <div class="category-card">
+      <img src="images/old-bollywood.jpg">
+      <p>Old Bollywood</p>
+    </div>
+
+  </div>
 
 </div>
+
+<script src="js/search.js"></script>
+
 <!-- GLOBAL PLAYER (SHARED) -->
 <div class="player">
 
@@ -59,20 +87,9 @@
 
 </div>
 
-<!-- ✅ LOAD GLOBAL PLAYER FIRST -->
+
 <script src="js/script.js"></script>
 
-<!-- ✅ THEN PAGE LOGIC -->
-<script src="js/likes.js"></script>
-
-<script>
-  const sidebarLinks = document.querySelectorAll('.sidebar ul li a');
-  sidebarLinks.forEach(link => {
-    if (link.href === window.location.href) {
-      link.parentElement.classList.add('active');
-    }
-  });
-</script>
 
 
 </body>

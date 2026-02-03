@@ -1,3 +1,4 @@
+/* ================= RESET & BASE ================= */
 * {
   margin: 0;
   padding: 0;
@@ -9,13 +10,14 @@ html, body {
   height: 100%;
 }
 
-/* ================= BODY ================= */
 body {
   background: #121212;
   color: white;
 }
 
 /* ================= SIDEBAR ================= */
+/* Shared sidebar for index, likes, search */
+
 .sidebar {
   position: fixed;
   left: 0;
@@ -57,16 +59,19 @@ body {
   color: #000;
 }
 
-/* ================= MAIN ================= */
+/* ================= MAIN CONTENT ================= */
+/* Leaves space for sidebar and bottom player */
+
 .main {
   margin-left: 220px;
   min-height: 100vh;
   background: #181818;
   padding: 40px;
-  padding-bottom: 140px; /* space for player */
+  padding-bottom: 140px;
 }
 
-/* ================= NAVBAR ================= */
+/* ================= NAVBAR / SEARCH ================= */
+
 .navbar input {
   width: 300px;
   padding: 10px;
@@ -76,6 +81,8 @@ body {
 }
 
 /* ================= SONG LIST ================= */
+/* Used in index, likes, search */
+
 .song-list {
   display: flex;
   gap: 20px;
@@ -90,6 +97,7 @@ body {
   border-radius: 10px;
   transition: 0.3s;
   cursor: pointer;
+  user-select: none;
 }
 
 .song-card:hover {
@@ -109,7 +117,9 @@ body {
   border-color: #1ed760;
 }
 
-/* ================= PLAYER ================= */
+/* ================= PLAYER (GLOBAL) ================= */
+/* Appears on ALL pages */
+
 .player {
   position: fixed;
   bottom: 0;
@@ -118,30 +128,48 @@ body {
   min-height: 120px;
   padding: 10px 20px;
   background: #181818;
- border-top: 1px solid rgba(255,255,255,0.05);
+  border-top: 1px solid rgba(255,255,255,0.05);
 
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
   gap: 8px;
+
+  z-index: 1000;
 }
 
-/* Player Info */
+/* ================= PLAYER INFO ================= */
+
 .song-info {
+  display: flex;
+  align-items: center;
+  gap: 12px;
   text-align: center;
 }
 
-/* Player Thumbnail */
-.player-thumbnail {
-  width: 80px;
-  height: 80px;
-  border-radius: 12px;
+/* ================= PLAYER THUMBNAIL ================= */
+
+#playerThumbnail {
+  width: 55px;
+  height: 55px;
+  border-radius: 50%;
   object-fit: cover;
   border: 2px solid #1db954;
 }
 
-/* Controls */
+/* Rotating animation when playing */
+@keyframes spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+#playerThumbnail.playing {
+  animation: spin 4s linear infinite;
+}
+
+/* ================= PLAYER CONTROLS ================= */
+
 .controls button {
   background: none;
   border: none;
@@ -149,13 +177,19 @@ body {
   font-size: 20px;
   margin: 0 10px;
   cursor: pointer;
+  transition: transform 0.15s ease, color 0.2s;
 }
 
 .controls button:hover {
   color: #1db954;
 }
 
-/* Progress */
+.controls button:active {
+  transform: scale(0.9);
+}
+
+/* ================= PROGRESS BAR ================= */
+
 .progress-container {
   display: flex;
   align-items: center;
@@ -168,7 +202,26 @@ body {
   cursor: pointer;
 }
 
+/* ================= LIKE BUTTON ================= */
+/* Visual only — logic handled in JS */
+
+#likeBtn {
+  font-size: 22px;
+  cursor: pointer;
+  background: none;
+  border: none;
+  line-height: 1;
+  transition: transform 0.2s ease;
+}
+
+#likeBtn.liked {
+  color: hotpink;
+  transform: scale(1.1);
+}
+
 /* ================= UPLOAD FORM ================= */
+/* Admin / upload page only */
+
 .upload-form {
   display: flex;
   flex-direction: column;
@@ -188,7 +241,6 @@ body {
   border: 1px solid #444;
   background: #222;
   color: #fff;
-  transition: 0.3s;
 }
 
 .upload-form input:hover,
@@ -208,8 +260,8 @@ body {
   background: #1ed760;
 }
 
+/* ================= ADMIN TABLE ================= */
 
-/* =================ADMIN ==============*/
 .admin-table {
   width: 100%;
   margin-top: 20px;
@@ -219,7 +271,6 @@ body {
 .admin-table th,
 .admin-table td {
   padding: 12px;
-  text-align: left;
   border-bottom: 1px solid #333;
 }
 
@@ -231,44 +282,46 @@ body {
   background: #222;
 }
 
+/* ================= CATEGORY GRID (SEARCH PAGE) ================= */
 
-/* ================= PLAYER THUMBNAIL ANIMATION =================
- */
-.song-info {
-  display: flex;
-  align-items: center;
-  gap: 12px;
+.category-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+  gap: 20px;
+  margin-top: 20px;
 }
 
-#playerThumbnail {
-  width: 55px;
-  height: 55px;
-  border-radius: 8px;
+.category-card {
+  cursor: pointer;
+  text-align: center;
+}
+
+.category-card img {
+  width: 100%;
+  height: 120px;
   object-fit: cover;
-  border: 2px solid #1db954;
+  border-radius: 12px;
 }
 
+.category-card p {
+  margin-top: 8px;
+  font-weight: bold;
+}
 
-/* 🎵 Rotating thumbnail animation */
-@keyframes spin {
-  from {
-    transform: rotate(0deg);
+/* ================= RESPONSIVE SAFETY ================= */
+
+@media (max-width: 768px) {
+  .player {
+    left: 0;
   }
-  to {
-    transform: rotate(360deg);
+
+  .main {
+    margin-left: 0;
   }
-}
 
-/* Default thumbnail style */
-#playerThumbnail {
-  width: 55px;
-  height: 55px;
-  border-radius: 50%;
-  object-fit: cover;
-  border: 2px solid #1db954;
-}
-
-/* When playing → rotate */
-#playerThumbnail.playing {
-  animation: spin 4s linear infinite;
+  .sidebar {
+    position: relative;
+    width: 100%;
+    height: auto;
+  }
 }

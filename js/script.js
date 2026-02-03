@@ -6,25 +6,26 @@ const progressBar = document.getElementById("progressBar");
 const currentTimeEl = document.getElementById("currentTime");
 const durationEl = document.getElementById("duration");
 const likeBtn = document.getElementById("likeBtn");
+const playerThumbnail = document.getElementById("playerThumbnail");
 
+const userId = localStorage.getItem("userId") || 1; // TEMP user
 let songs = [];
 let currentSongIndex = 0;
+let currentSongId = null;
 let isPlaying = false;
+let isLiked = false;
 
 const audio = new Audio();
 
-
-// ================= FETCH SONGS =================
+/* ================= FETCH SONGS ================= */
 fetch("http://localhost:5000/api/songs")
   .then(res => res.json())
   .then(data => {
     songs = data;
     renderSongs();
-  })
-  .catch(err => console.error("Fetch error:", err));
+  });
 
-
-// ================= RENDER SONGS =================
+/* ================= RENDER SONGS ================= */
 function renderSongs() {
   const container = document.querySelector(".song-list");
   container.innerHTML = "";
@@ -49,87 +50,64 @@ function renderSongs() {
   });
 }
 
-
-// ================= LOAD SONG =================
-
-const playerThumbnail = document.getElementById("playerThumbnail");
-
+/* ================= LOAD SONG ================= */
 function loadSong() {
   const song = songs[currentSongIndex];
   if (!song) return;
 
+  currentSongId = song.id;
+
   audio.src = song.audio_url;
   nowPlaying.innerHTML = `Now Playing: <strong>${song.title}</strong>`;
+  playerThumbnail.src = song.image_url;
 
-  if (playerThumbnail) {
-    playerThumbnail.src = song.image_url;
-  }
+  // reset like UI first
+  likeBtn.innerText = "🤍";
+  likeBtn.classList.remove("liked");
+  isLiked = false;
+
+  // sync with DB
+  checkLikeStatus();
 }
 
-
-// ================= PLAY / PAUSE =================
+/* ================= PLAY / PAUSE ================= */
 function playSong() {
   audio.play();
   isPlaying = true;
   playBtn.innerText = "⏸";
-
-  if (playerThumbnail) {
-    playerThumbnail.classList.add("playing");
-  }
+  playerThumbnail.classList.add("playing");
 }
-
 
 function pauseSong() {
   audio.pause();
   isPlaying = false;
   playBtn.innerText = "▶";
-
-  if (playerThumbnail) {
-    playerThumbnail.classList.remove("playing");
-  }
+  playerThumbnail.classList.remove("playing");
 }
 
-
 playBtn.addEventListener("click", () => {
-  if (!audio.src) {
-    loadSong();
-    playSong();
-    return;
-  }
+  if (!audio.src) return;
   isPlaying ? pauseSong() : playSong();
 });
 
-audio.addEventListener("ended", () => {
-  if (playerThumbnail) {
-    playerThumbnail.classList.remove("playing");
-  }
-  nextBtn.click();
-});
-
-
-// ================= NEXT / PREVIOUS =================
+/* ================= NEXT / PREV ================= */
 nextBtn.addEventListener("click", () => {
+  if (!songs.length) return;
   currentSongIndex = (currentSongIndex + 1) % songs.length;
   loadSong();
   playSong();
 });
 
 prevBtn.addEventListener("click", () => {
-  currentSongIndex =
-    (currentSongIndex - 1 + songs.length) % songs.length;
+  if (!songs.length) return;
+  currentSongIndex = (currentSongIndex - 1 + songs.length) % songs.length;
   loadSong();
   playSong();
 });
 
-audio.addEventListener("ended", () => {
-  nextBtn.click();
-});
-
-
-// ================= PROGRESS BAR =================
+/* ================= PROGRESS ================= */
 audio.addEventListener("timeupdate", () => {
   if (!audio.duration) return;
-
   progressBar.value = (audio.currentTime / audio.duration) * 100;
   currentTimeEl.innerText = formatTime(audio.currentTime);
   durationEl.innerText = formatTime(audio.duration);
@@ -140,20 +118,58 @@ progressBar.addEventListener("input", () => {
 });
 
 function formatTime(time) {
-  if (!time) return "0:00";
   const min = Math.floor(time / 60);
   const sec = Math.floor(time % 60).toString().padStart(2, "0");
   return `${min}:${sec}`;
 }
 
+/* ================= LIKE SONG ================= */
+likeBtn.addEventListener("click", async () => {
+  if (!currentSongId) return;
 
-// ================= LIKE BUTTON (UI ONLY FOR NOW) =================
-let liked = false;
+  try {
+    const res = await fetch("http://localhost:5000/api/likes", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ userId, songId: currentSongId })
+    });
 
-if (likeBtn) {
-  likeBtn.addEventListener("click", () => {
-    liked = !liked;
-    likeBtn.innerText = liked ? "❤️" : "🤍";
-  });
+    const data = await res.json();
+    isLiked = data.liked;
+
+    if (isLiked) {
+      likeBtn.innerText = "❤️";
+      likeBtn.classList.add("liked");
+    } else {
+      likeBtn.innerText = "🤍";
+      likeBtn.classList.remove("liked");
+    }
+
+  } catch (err) {
+    console.error("Like error:", err);
+  }
+});
+
+/* ================= CHECK LIKE STATUS ================= */
+async function checkLikeStatus() {
+  if (!currentSongId) return;
+
+  try {
+    const res = await fetch(
+      `http://localhost:5000/api/likes/check?userId=${userId}&songId=${currentSongId}`
+    );
+    const data = await res.json();
+    isLiked = data.liked;
+
+    if (isLiked) {
+      likeBtn.innerText = "❤️";
+      likeBtn.classList.add("liked");
+    } else {
+      likeBtn.innerText = "🤍";
+      likeBtn.classList.remove("liked");
+    }
+
+  } catch (err) {
+    console.error("Check like error:", err);
+  }
 }
- 
