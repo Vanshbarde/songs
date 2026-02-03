@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Admin Dashboard</title>
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+<!-- Sidebar -->
+<div class="sidebar">
+  <h2 class="logo">⚙ Admin</h2>
+  <ul>
+    <li class="active">Dashboard</li>
+    <li><a href="upload.html">Upload Song</a></li>
+    <li><a href="admin.html">Analytics</a></li>
+    <li><a href="index.html">User View</a></li>
+  </ul>
+</div>
+
+<!-- Main Content -->
+<div class="main">
+  <h2>📊 Admin Analytics Dashboard</h2>
+
+  <!-- TOP CARDS -->
+  <div class="admin-cards">
+
+    <div class="admin-card">
+      <h3>🎧 Total Plays</h3>
+      <p id="totalPlays">Loading...</p>
+    </div>
+
+    <div class="admin-card">
+      <h3>🔥 Most Played Song</h3>
+      <p id="mostPlayed">Loading...</p>
+    </div>
+
+    <div class="admin-card">
+      <h3>❤️ Most Liked Song</h3>
+      <p id="mostLiked">Loading...</p>
+    </div>
+
+  </div>
+
+  <!-- SONG STATS TABLE -->
+  <h3 style="margin-top:40px;">📈 Song Statistics</h3>
+
+  <table class="admin-table">
+    <thead>
+      <tr>
+        <th>Song</th>
+        <th>Artist</th>
+        <th>Plays</th>
+        <th>Likes</th>
+      </tr>
+    </thead>
+    <tbody id="songsTable">
+      <!-- Filled by admin.js -->
+    </tbody>
+  </table>
+</div>
+
+<script src="js/admin.js"></script>
+</body>
+</html>

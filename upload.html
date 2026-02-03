@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Upload Song - MyMusic</title>
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+<!-- Sidebar -->
+<div class="sidebar">
+  <h2 class="logo">🎵 MyMusic</h2>
+ <ul>
+  <li><a href="index.html">Home</a></li>
+  <li>Search</li>
+  <li>Liked Songs</li>
+  <li class="active">Upload</li>
+</ul>
+    <!-- <li><a href="admin.html">Admin</a></li> -->
+
+</div>
+
+<!-- Main Content -->
+<div class="main">
+
+  <h2>Upload New Song</h2>
+
+  <form id="uploadForm" class="upload-form">
+    <input type="text" name="title" placeholder="Song Title" required>
+    <input type="text" name="artist" placeholder="Artist" required>
+    <input type="text" name="genre" placeholder="Genre" required>
+
+    <label>Song File (mp3)</label>
+    <input type="file" name="song" accept="audio/*" required>
+
+    <label>Cover Image</label>
+    <input type="file" name="image" accept="image/*" required>
+
+    <button type="submit">Upload Song</button>
+  </form>
+
+  <p id="status"></p>
+
+</div>
+
+<script src="js/upload.js"></script>
+</body>
+</html>

@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Music Recommendation System</title>
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+<!-- Sidebar -->
+<div class="sidebar">
+  <h2 class="logo">🎵 MyMusic</h2>
+  <ul>
+    <li class="active">Home</li>
+    <li>Search</li>
+    <li><a href="likes.html">Liked Songs</a></li>
+    <li><a href="admin.html">Admin</a></li>
+  </ul>
+</div>
+
+<!-- Main Content -->
+<div class="main">
+  
+  <!-- Navbar -->
+  <div class="navbar">
+    <input type="text" placeholder="Search songs...">
+  </div>
+
+  <!-- Songs Section -->
+  <h2>Recommended Songs</h2>
+
+  <div class="song-list">
+
+    <div class="song-card">
+      <img src="backend/uploads/images/dhurandar.jpeg">
+      <h4>Heeriye</h4>
+      <p>Arijit Singh</p>
+    </div>
+
+    <div class="song-card">
+      <img src="backend/uploads/images/dhurandar.jpeg">
+      <h4>Perfect</h4>
+      <p>Ed Sheeran</p>
+    </div>
+
+    <div class="song-card">
+      <img src="backend/uploads/images/dhurandar.jpeg">
+      <h4>Kesariya</h4>
+      <p>Arijit Singh</p>
+    </div>
+
+  </div>
+
+</div>
+
+
+
+
+
+
+<!-- Player -->
+<div class="player">
+
+  <div class="song-info">
+    <img id="playerThumbnail" src="" alt="Song Thumbnail">
+    <p id="nowPlaying">Now Playing: <strong>None</strong></p>
+  </div>
+
+  <div class="controls">
+    <button id="prevBtn">⏮</button>
+    <button id="playBtn">▶</button>
+    <button id="nextBtn">⏭</button>
+      <button id="likeBtn">🤍</button>
+  </div>
+
+  <div class="progress-container">
+    <span id="currentTime">0:00</span>
+    <input type="range" id="progressBar" value="0">
+    <span id="duration">0:00</span>
+  </div>
+</div>
+
+
+
+
+
+
+
+
+
+<script src="js/script.js"></script>
+<script>
+// Automatically highlight current page in sidebar
+const sidebarLinks = document.querySelectorAll('.sidebar ul li a');
+sidebarLinks.forEach(link => {
+  if (link.href === window.location.href) {
+    link.parentElement.classList.add('active');
+  }
+});
+</script>
+
+</body>
+
+</html>
