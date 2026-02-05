@@ -1,3 +1,17 @@
+// 🔥 GLOBAL SAFE PLAYLIST SETTER
+window.setPlaylistAndPlay = function (playlist, index) {
+  songs = playlist;
+  currentSongIndex = index;
+  loadSong();
+  playSong();
+};
+
+
+
+if (!localStorage.getItem("userId")) {
+  localStorage.setItem("userId", "1");
+}
+
 const playBtn = document.getElementById("playBtn");
 const prevBtn = document.getElementById("prevBtn");
 const nextBtn = document.getElementById("nextBtn");
@@ -8,8 +22,9 @@ const durationEl = document.getElementById("duration");
 const likeBtn = document.getElementById("likeBtn");
 const playerThumbnail = document.getElementById("playerThumbnail");
 
-const userId = localStorage.getItem("userId") || 1; // TEMP user
-let songs = [];
+const userId = Number(localStorage.getItem("userId")) || 1;
+
+let songs = window.songs || [];
 let currentSongIndex = 0;
 let currentSongId = null;
 let isPlaying = false;
@@ -17,17 +32,32 @@ let isLiked = false;
 
 const audio = new Audio();
 
+function formatDuration(seconds) {
+  if (!seconds) return "--:--";
+  const m = Math.floor(seconds / 60);
+  const s = seconds % 60;
+  return `${m}:${s.toString().padStart(2, "0")}`;
+}
+
+
+/* 🚨 DO NOT RENDER SONG LIST ON LIKES PAGE */
+const isLikesPage = document.body.classList.contains("likes-page");
+
 /* ================= FETCH SONGS ================= */
-fetch("http://localhost:5000/api/songs")
-  .then(res => res.json())
-  .then(data => {
-    songs = data;
-    renderSongs();
-  });
+if (!isLikesPage) {
+  fetch("http://localhost:5000/api/songs")
+    .then(res => res.json())
+    .then(data => {
+      songs = data;
+      renderSongs();
+    });
+}
 
 /* ================= RENDER SONGS ================= */
 function renderSongs() {
   const container = document.querySelector(".song-list");
+  if (!container) return;
+
   container.innerHTML = "";
 
   songs.forEach((song, index) => {
@@ -35,7 +65,7 @@ function renderSongs() {
     card.className = "song-card";
 
     card.innerHTML = `
-      <img src="${song.image_url}">
+<img src="http://localhost:5000${song.image_url}">
       <h4>${song.title}</h4>
       <p>${song.artist}</p>
     `;
@@ -52,30 +82,69 @@ function renderSongs() {
 
 /* ================= LOAD SONG ================= */
 function loadSong() {
+  songs = window.songs || songs;
   const song = songs[currentSongIndex];
   if (!song) return;
 
   currentSongId = song.id;
+  audio.src = `http://localhost:5000${song.audio_url}`;
+  audio.currentTime = 0;
 
-  audio.src = song.audio_url;
+  // Play immediately
+  audio.play()
+    .then(() => {
+      isPlaying = true;
+      playBtn.innerText = "⏸";
+      playerThumbnail.classList.add("playing");
+
+      // ✅ Store play after successful start
+      fetch("http://localhost:5000/api/plays", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          user_id: userId,
+          song_id: currentSongId
+        })
+      })
+      .then(res => res.json())
+      .then(() => console.log("✅ Play stored"))
+      .catch(err => console.error("❌ Play not stored", err));
+    })
+    .catch(err => console.error("❌ Auto-play failed:", err));
+
   nowPlaying.innerHTML = `Now Playing: <strong>${song.title}</strong>`;
-  playerThumbnail.src = song.image_url;
+  playerThumbnail.src = `http://localhost:5000${song.image_url}`;
 
-  // reset like UI first
+  durationEl.innerText = formatDuration(song.duration);
+
   likeBtn.innerText = "🤍";
   likeBtn.classList.remove("liked");
   isLiked = false;
 
-  // sync with DB
   checkLikeStatus();
+  checkIfLiked(song.id);
 }
+
+
+
 
 /* ================= PLAY / PAUSE ================= */
 function playSong() {
+  if (!currentSongId) return;
+
   audio.play();
   isPlaying = true;
   playBtn.innerText = "⏸";
   playerThumbnail.classList.add("playing");
+
+  fetch("http://localhost:5000/api/plays", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ user_id: userId, song_id: currentSongId })
+  })
+  .then(res => res.json())
+  .then(() => console.log("✅ Play stored"))
+  .catch(err => console.error("❌ Play not stored", err));
 }
 
 function pauseSong() {
@@ -85,91 +154,71 @@ function pauseSong() {
   playerThumbnail.classList.remove("playing");
 }
 
-playBtn.addEventListener("click", () => {
+
+playBtn.onclick = () => {
   if (!audio.src) return;
   isPlaying ? pauseSong() : playSong();
-});
+};
 
 /* ================= NEXT / PREV ================= */
-nextBtn.addEventListener("click", () => {
+nextBtn.onclick = () => {
   if (!songs.length) return;
   currentSongIndex = (currentSongIndex + 1) % songs.length;
   loadSong();
   playSong();
-});
+};
 
-prevBtn.addEventListener("click", () => {
+prevBtn.onclick = () => {
   if (!songs.length) return;
   currentSongIndex = (currentSongIndex - 1 + songs.length) % songs.length;
   loadSong();
   playSong();
-});
+};
 
-/* ================= PROGRESS ================= */
-audio.addEventListener("timeupdate", () => {
-  if (!audio.duration) return;
-  progressBar.value = (audio.currentTime / audio.duration) * 100;
-  currentTimeEl.innerText = formatTime(audio.currentTime);
-  durationEl.innerText = formatTime(audio.duration);
-});
-
-progressBar.addEventListener("input", () => {
-  audio.currentTime = (progressBar.value / 100) * audio.duration;
-});
-
-function formatTime(time) {
-  const min = Math.floor(time / 60);
-  const sec = Math.floor(time % 60).toString().padStart(2, "0");
-  return `${min}:${sec}`;
-}
-
-/* ================= LIKE SONG ================= */
-likeBtn.addEventListener("click", async () => {
+/* ================= LIKE ================= */
+likeBtn.onclick = async () => {
   if (!currentSongId) return;
 
-  try {
-    const res = await fetch("http://localhost:5000/api/likes", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ userId, songId: currentSongId })
-    });
+  const res = await fetch("http://localhost:5000/api/likes", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ userId, songId: currentSongId })
+  });
 
-    const data = await res.json();
-    isLiked = data.liked;
+  const data = await res.json();
+  isLiked = data.liked;
 
-    if (isLiked) {
-      likeBtn.innerText = "❤️";
-      likeBtn.classList.add("liked");
-    } else {
-      likeBtn.innerText = "🤍";
-      likeBtn.classList.remove("liked");
-    }
+  likeBtn.innerText = isLiked ? "❤️" : "🤍";
+};
 
-  } catch (err) {
-    console.error("Like error:", err);
-  }
-});
-
-/* ================= CHECK LIKE STATUS ================= */
+/* ================= CHECK LIKE ================= */
 async function checkLikeStatus() {
-  if (!currentSongId) return;
+  const res = await fetch(
+    `http://localhost:5000/api/likes/check?userId=${userId}&songId=${currentSongId}`
+  );
+  const data = await res.json();
 
-  try {
-    const res = await fetch(
-      `http://localhost:5000/api/likes/check?userId=${userId}&songId=${currentSongId}`
-    );
-    const data = await res.json();
-    isLiked = data.liked;
-
-    if (isLiked) {
-      likeBtn.innerText = "❤️";
-      likeBtn.classList.add("liked");
-    } else {
-      likeBtn.innerText = "🤍";
-      likeBtn.classList.remove("liked");
-    }
-
-  } catch (err) {
-    console.error("Check like error:", err);
-  }
+  isLiked = data.liked;
+  likeBtn.innerText = isLiked ? "❤️" : "🤍";
 }
+
+
+// ================= PROGRESS BAR & TIME =================
+audio.addEventListener("timeupdate", () => {
+  const current = Math.floor(audio.currentTime);
+  const duration = Math.floor(audio.duration) || 0;
+
+  currentTimeEl.innerText = formatDuration(current);
+  progressBar.max = duration;
+  progressBar.value = current;
+});
+
+// Seek functionality
+progressBar.addEventListener("input", () => {
+  audio.currentTime = progressBar.value;
+});
+
+
+audio.addEventListener("ended", () => {
+  nextBtn.onclick();
+});

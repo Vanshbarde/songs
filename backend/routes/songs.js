@@ -1,79 +1,86 @@
 const express = require("express");
-const multer = require("multer");
+const router = express.Router();
 const pool = require("../db");
+const multer = require("multer");
 const path = require("path");
 
-const router = express.Router();
-
-// Storage config
+/* ================= MULTER CONFIG ================= */
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
-    if (file.fieldname === "song") {
-      cb(null, "uploads/songs");
-    } else {
-      cb(null, "uploads/images");
-    }
+    cb(null, "uploads/");
   },
   filename: (req, file, cb) => {
     cb(null, Date.now() + path.extname(file.originalname));
-  },
+  }
 });
 
 const upload = multer({ storage });
 
-// ✅ UPLOAD SONG ROUTE
+/* ================= UPLOAD SONG ================= */
 router.post(
   "/upload",
-  upload.fields([{ name: "song" }, { name: "image" }]),
+  upload.fields([
+    { name: "audio", maxCount: 1 },
+    { name: "image", maxCount: 1 }
+  ]),
   async (req, res) => {
     try {
-      console.log("📥 Upload request received");
+      const { title, artist, genre, duration } = req.body;
 
-      const { title, artist, genre } = req.body;
+      // ✅ Validate duration here
+      const durationNum = Number(duration);
+      if (isNaN(durationNum) || durationNum <= 0) {
+        return res.status(400).json({ error: "Invalid duration" });
+      }
 
-      // ✅ SAFE LOGGING (inside function)
-      console.log("Title:", title);
-      console.log("Artist:", artist);
-      console.log("Genre:", genre);
+      if (!req.files.audio || !req.files.image) {
+        return res.status(400).json({ error: "Files missing" });
+      }
 
-      const songFile = req.files.song[0].filename;
-      const imageFile = req.files.image[0].filename;
-
-      console.log("Song file:", songFile);
-      console.log("Image file:", imageFile);
-
-      const audioUrl = `http://localhost:5000/uploads/songs/${songFile}`;
-      const imageUrl = `http://localhost:5000/uploads/images/${imageFile}`;
+      const audioUrl = `/uploads/${req.files.audio[0].filename}`;
+      const imageUrl = `/uploads/${req.files.image[0].filename}`;
 
       const result = await pool.query(
-        `INSERT INTO songs (title, artist, genre, audio_url, image_url)
-         VALUES ($1, $2, $3, $4, $5)
+        `INSERT INTO songs 
+         (title, artist, genre, audio_url, image_url, duration)
+         VALUES ($1, $2, $3, $4, $5, $6)
          RETURNING *`,
-        [title, artist, genre, audioUrl, imageUrl]
+        [title, artist, genre, audioUrl, imageUrl, durationNum] // use validated number
       );
 
-      console.log("✅ Song saved to database with ID:", result.rows[0].id);
+      const song = result.rows[0];
+
+      console.log("🎵 NEW SONG UPLOADED");
+      console.log("ID       :", song.id);
+      console.log("Title    :", song.title);
+      console.log("Artist   :", song.artist);
+      console.log("Genre    :", song.genre);
+      console.log("Duration :", song.duration);
+      console.log("---------------------------");
 
       res.json({
-        success: true,
         message: "Song uploaded successfully",
-        song: result.rows[0],
+        song
       });
-
     } catch (err) {
-      console.error("❌ Upload error:", err.message);
-      res.status(500).json({
-        success: false,
-        message: "Song upload failed",
-      });
+      console.error("UPLOAD ERROR:", err);
+      res.status(500).json({ error: "Upload failed" });
     }
   }
 );
 
-// GET ALL SONGS
+
+/* ================= GET SONGS ================= */
 router.get("/", async (req, res) => {
-  const songs = await pool.query("SELECT * FROM songs");
-  res.json(songs.rows);
+  try {
+    const result = await pool.query(
+      "SELECT * FROM songs ORDER BY id DESC"
+    );
+    res.json(result.rows);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: "Failed to fetch songs" });
+  }
 });
 
 module.exports = router;

@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Analytics</title>
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+<div class="sidebar">
+  <h2 class="logo">🎵 MyMusic</h2>
+  <ul>
+    <li><a href="upload.html">Home</a></li>
+    <li><a href="upload.html">Upload Song</a></li>
+    <li class="active"><a href="analytics.html">Analytics</a></li>
+    <li><a href="index.html">User View</a></li>
+  </ul>
+</div>
+
+<div class="analytics-container">
+
+  <!-- TOP STATS -->
+  <div class="stats">
+    <div class="stat-card">
+      <h3>Total Users</h3>
+      <p id="users">0</p>
+    </div>
+
+    <div class="stat-card">
+      <h3>Total Songs</h3>
+      <p id="songs">0</p>
+    </div>
+
+    <div class="stat-card">
+      <h3>Total Plays</h3>
+      <p id="plays">0</p>
+    </div>
+
+    <div class="stat-card">
+      <h3>Most Played</h3>
+      <p id="topSong">-</p>
+    </div>
+  </div>
+
+  <!-- SONG TABLE -->
+  <div class="table-box">
+    <h2>Song Analytics</h2>
+    <table>
+      <thead>
+        <tr>
+          <th>Title</th>
+          <th>Duration</th>
+          <th>Genre</th>
+          <th>Likes</th>
+          <th>Plays</th>
+        </tr>
+      </thead>
+      <tbody id="songTable"></tbody>
+    </table>
+  </div>
+
+</div>
+
+<script>
+fetch("http://localhost:5000/api/analytics/overview")
+  .then(res => res.json())
+  .then(d => {
+    users.innerText = d.total_users;
+    songs.innerText = d.total_songs;
+    plays.innerText = d.total_plays;
+  });
+
+fetch("http://localhost:5000/api/analytics/most-played")
+  .then(res => res.json())
+  .then(d => {
+    topSong.innerText = d ? d.title : "-";
+  });
+
+fetch("http://localhost:5000/api/analytics/songs")
+  .then(res => res.json())
+  .then(rows => {
+    const tbody = document.getElementById("songTable");
+    tbody.innerHTML = "";
+
+    rows.forEach(s => {
+      tbody.innerHTML += `
+        <tr>
+          <td>${s.title}</td>
+          <td>${s.genre || "-"}</td>
+          <td>${s.likes}</td>
+          <td>${s.plays}</td>
+        </tr>
+      `;
+    });
+  });
+
+</script>
+
+
+</body>
+</html>

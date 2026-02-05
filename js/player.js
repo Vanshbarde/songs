@@ -1,51 +1,31 @@
-const audio = document.getElementById("audio");
-const titleEl = document.getElementById("playerTitle");
-const artistEl = document.getElementById("playerArtist");
-const imageEl = document.getElementById("playerImage");
+const progressBar = document.getElementById("progressBar");
+const currentTimeEl = document.getElementById("currentTime");
+const durationEl = document.getElementById("duration");
+const playerThumbnail = document.getElementById("playerThumbnail");
 
-let playlist = [];
-let currentIndex = 0;
-let isPlaying = false;
+// Update progress bar & current time
+audio.addEventListener("timeupdate", () => {
+  if (!audio.duration) return;
+  const progressPercent = (audio.currentTime / audio.duration) * 100;
+  progressBar.value = progressPercent;
 
-/* LOAD SONG */
-function loadSong(song, index, list) {
-  playlist = list;
-  currentIndex = index;
+  const minutes = Math.floor(audio.currentTime / 60);
+  const seconds = Math.floor(audio.currentTime % 60);
+  currentTimeEl.textContent = `${minutes}:${seconds.toString().padStart(2, "0")}`;
 
-  titleEl.innerText = song.title;
-  artistEl.innerText = song.artist;
-  imageEl.src = song.image_url;
-  audio.src = song.audio_url;
+  // Total duration
+  const durMinutes = Math.floor(audio.duration / 60);
+  const durSeconds = Math.floor(audio.duration % 60);
+  durationEl.textContent = `${durMinutes}:${durSeconds.toString().padStart(2, "0")}`;
+});
 
-  audio.play();
-  isPlaying = true;
-}
+// Seek functionality
+progressBar.addEventListener("input", () => {
+  if (!audio.duration) return;
+  audio.currentTime = (progressBar.value / 100) * audio.duration;
+});
 
-/* PLAY / PAUSE */
-function togglePlay() {
-  if (!audio.src) return;
-
-  if (isPlaying) {
-    audio.pause();
-  } else {
-    audio.play();
-  }
-  isPlaying = !isPlaying;
-}
-
-/* NEXT */
-function nextSong() {
-  if (!playlist.length) return;
-
-  currentIndex = (currentIndex + 1) % playlist.length;
-  loadSong(playlist[currentIndex], currentIndex, playlist);
-}
-
-/* PREVIOUS */
-function prevSong() {
-  if (!playlist.length) return;
-
-  currentIndex =
-    (currentIndex - 1 + playlist.length) % playlist.length;
-  loadSong(playlist[currentIndex], currentIndex, playlist);
-}
+// Rotate thumbnail on play/pause
+audio.addEventListener("play", () => playerThumbnail.classList.add("playing"));
+audio.addEventListener("pause", () => playerThumbnail.classList.remove("playing"));
+audio.addEventListener("ended", () => playerThumbnail.classList.remove("playing"));

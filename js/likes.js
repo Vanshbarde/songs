@@ -1,18 +1,22 @@
-const userId = localStorage.getItem("userId") || 1;
+const userId = Number(localStorage.getItem("userId")) || 1;
 const container = document.querySelector(".song-list");
 const searchInput = document.getElementById("searchInput");
 
 let likedSongs = [];
 
-/* ================= FETCH LIKED SONGS ================= */
-fetch(`http://localhost:5000/api/likes/user/${userId}`)
-  .then(res => res.json())
-  .then(songs => {
+// 🔹 FETCH LIKED SONGS
+async function fetchLikedSongs() {
+  try {
+    const res = await fetch(`http://localhost:5000/api/likes/user/${userId}`);
+    const songs = await res.json();
     likedSongs = songs;
     renderSongs(likedSongs);
-  });
+  } catch (err) {
+    console.error("❌ Failed to fetch liked songs:", err);
+  }
+}
 
-/* ================= RENDER ================= */
+// 🔹 RENDER SONGS
 function renderSongs(songs) {
   container.innerHTML = "";
 
@@ -31,28 +35,29 @@ function renderSongs(songs) {
       <p>${song.artist}</p>
     `;
 
-    // ✅ CONNECT TO GLOBAL PLAYER
-    card.addEventListener("click", () => {
-      // override global playlist
-      window.songs = songs;
-      window.currentSongIndex = index;
-
-      loadSong();
-      playSong();
-    });
+    card.onclick = () => {
+      window.setPlaylistAndPlay(songs, index);
+    };
 
     container.appendChild(card);
   });
 }
 
-/* ================= SEARCH ================= */
+// 🔹 SEARCH
 searchInput.addEventListener("input", () => {
   const value = searchInput.value.toLowerCase();
-
-  const filtered = likedSongs.filter(song =>
-    song.title.toLowerCase().includes(value) ||
-    song.artist.toLowerCase().includes(value)
+  const filtered = likedSongs.filter(
+    (song) =>
+      song.title.toLowerCase().includes(value) ||
+      song.artist.toLowerCase().includes(value)
   );
-
   renderSongs(filtered);
 });
+
+// 🔹 REFRESH WHEN LIKE/UNLIKE
+window.addEventListener("likeToggled", () => {
+  fetchLikedSongs();
+});
+
+// 🔹 INITIAL FETCH
+fetchLikedSongs();

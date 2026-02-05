@@ -1,23 +1,34 @@
-const express = require("express");
-const router = express.Router();
-const pool = require("../db");
+function formatDuration(seconds) {
+  if (!seconds) return "--:--";
+  const m = Math.floor(seconds / 60);
+  const s = seconds % 60;
+  return `${m}:${s.toString().padStart(2, "0")}`;
+}
 
-router.get("/analytics", async (req, res) => {
-  const songs = await pool.query("SELECT * FROM songs");
+fetch("http://localhost:5000/api/admin/analytics")
+  .then(res => res.json())
+  .then(data => {
+    document.getElementById("mostPlayed").innerText =
+      `🔥 Most Played: ${data.mostPlayed?.title || "N/A"}`;
 
-  const mostPlayed = await pool.query(
-    "SELECT * FROM songs ORDER BY play_count DESC LIMIT 1"
-  );
+    document.getElementById("mostLiked").innerText =
+      `❤️ Most Liked: ${data.mostLiked?.title || "N/A"}`;
 
-  const mostLiked = await pool.query(
-    "SELECT * FROM songs ORDER BY like_count DESC LIMIT 1"
-  );
+    const table = document.getElementById("songsTable");
+    table.innerHTML = "";
 
-  res.json({
-    mostPlayed: mostPlayed.rows[0],
-    mostLiked: mostLiked.rows[0],
-    allSongs: songs.rows
-  });
-});
+    data.allSongs.forEach(song => {
+      const row = document.createElement("tr");
+      row.innerHTML = `
+        <td>${song.title}</td>
+        <td>${song.play_count}</td>
+        <td>${song.like_count}</td>
+        <td>${formatDuration(song.duration)}</td>
+       <td>${Math.floor(song.duration / 60)}:${song.duration % 60}</td>
 
-module.exports = router;
+
+      `;
+      table.appendChild(row);
+    });
+  })
+  .catch(err => console.error("Analytics error:", err));

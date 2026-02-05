@@ -16,8 +16,419 @@ body {
 }
 
 /* ================= SIDEBAR ================= */
-/* Shared sidebar for index, likes, search */
+.sidebar {
+  position: fixed;
+  left: 0;
+  top: 0;
+  width: 220px;
+  height: 100%;
+  min-height: 100vh;
+  background: #000;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  z-index: 100;
+}
 
+.logo {
+  margin-bottom: 30px;
+  text-align: center;
+    font-size: 24px;
+}
+
+.sidebar ul {
+  list-style: none;
+   padding-left: 0;
+}
+
+.sidebar ul li {
+  margin-bottom: 10px;
+  border-radius: 6px;
+}
+
+.sidebar ul li a {
+  display: block;
+  padding: 12px 10px;
+  text-decoration: none;
+  color: #b3b3b3;
+  border-radius: 6px;
+  transition: background 0.3s, color 0.3s;
+}
+
+.sidebar ul li.active a,
+.sidebar ul li a:hover {
+  background: #1db954;
+  color: #000;
+}
+
+/* ================= MAIN CONTENT ================= */
+.main {
+  margin-left: 220px;
+  min-height: 100vh;
+  background: #181818;
+  padding: 40px;
+  padding-bottom: 140px;
+  position: relative;
+  z-index: 1;
+}
+
+/* ================= NAVBAR / SEARCH ================= */
+.navbar input {
+  width: 300px;
+  padding: 10px;
+  border-radius: 20px;
+  border: none;
+  outline: none;
+}
+
+/* ================= SONG LIST ================= */
+.song-list {
+  display: flex;
+  gap: 20px;
+  margin-top: 20px;
+  flex-wrap: wrap;
+  z-index: 1;
+}
+
+.song-card {
+  background: #181818;
+  padding: 15px;
+  width: 160px;
+  border-radius: 10px;
+  transition: 0.3s;
+  cursor: pointer;
+  user-select: none;
+}
+
+.song-card:hover {
+  background: #282828;
+  transform: scale(1.05);
+}
+
+.song-card img {
+  width: 100%;
+  border-radius: 12px;
+  border: 2px solid #1db954;
+  transition: transform 0.3s, border 0.3s;
+}
+
+.song-card img:hover {
+  transform: scale(1.05);
+  border-color: #1ed760;
+}
+
+/* ================= PLAYER (GLOBAL) ================= */
+.player {
+  position: fixed;
+  bottom: 0;
+  left: 220px;
+  right: 0;
+  min-height: 120px;
+  padding: 10px 20px;
+  background: #181818;
+  border-top: 1px solid rgba(255,255,255,0.05);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 8px;
+  z-index: 1000;
+}
+
+/* ================= PLAYER INFO ================= */
+.song-info {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  text-align: center;
+}
+
+/* ================= PLAYER THUMBNAIL ================= */
+#playerThumbnail {
+  width: 55px;
+  height: 55px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 2px solid #1db954;
+  transition: transform 0.3s linear;
+}
+
+/* Rotating animation when playing */
+@keyframes spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+#playerThumbnail.playing {
+  animation: spin 4s linear infinite;
+}
+
+/* ================= PLAYER CONTROLS ================= */
+.controls button {
+  background: none;
+  border: none;
+  color: white;
+  font-size: 20px;
+  margin: 0 10px;
+  cursor: pointer;
+  transition: transform 0.15s ease, color 0.2s;
+}
+
+.controls button:hover {
+  color: #1db954;
+}
+
+.controls button:active {
+  transform: scale(0.9);
+}
+
+/* ================= PROGRESS BAR ================= */
+.progress-container {
+  display: flex;
+  align-items: center;
+  width: 90%;
+  gap: 10px;
+}
+
+#progressBar {
+  flex: 1;
+  cursor: pointer;
+}
+
+/* ================= LIKE BUTTON ================= */
+#likeBtn {
+  font-size: 22px;
+  cursor: pointer;
+  background: none;
+  border: none;
+  line-height: 1;
+  transition: transform 0.2s ease;
+}
+
+#likeBtn.liked {
+  color: hotpink;
+  transform: scale(1.1);
+}
+
+/* ================= RESPONSIVE SAFETY ================= */
+@media (max-width: 768px) {
+  .player {
+    left: 0;
+  }
+
+  .main {
+    margin-left: 0;
+  }
+
+  .sidebar {
+    position: relative;
+    width: 100%;
+    height: auto;
+    min-height: auto;
+  }
+}
+
+
+/* ================= RESET & BASE ================= */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: 'Segoe UI', sans-serif;
+}
+
+html, body {
+  height: 100%;
+}
+
+body {
+  background: #121212;
+  color: #fff;
+}
+
+/* ================= SIDEBAR ================= */
+.sidebar {
+  position: fixed;
+  left: 0;
+  top: 0;
+  width: 220px;
+  height: 100%;
+  min-height: 100vh;
+  background: #000;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  z-index: 100;
+}
+
+.logo {
+  margin-bottom: 30px;
+  text-align: center;
+  font-size: 24px;
+}
+
+.sidebar ul {
+  list-style: none;
+  padding-left: 0;
+}
+
+.sidebar ul li {
+  margin-bottom: 10px;
+  border-radius: 6px;
+}
+
+.sidebar ul li a {
+  display: block;
+  padding: 12px 10px;
+  text-decoration: none;
+  color: #b3b3b3;
+  border-radius: 6px;
+  transition: background 0.3s, color 0.3s;
+}
+
+.sidebar ul li.active a,
+.sidebar ul li a:hover {
+  background: #1db954;
+  color: #000;
+}
+
+/* ================= ANALYTICS CONTAINER ================= */
+.analytics-container {
+  margin-left: 220px;
+  padding: 30px;
+  min-height: 100vh;
+  background: #181818;
+}
+
+/* ================= TOP STATS CARDS ================= */
+.stats {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: 20px;
+  margin-bottom: 30px;
+}
+
+.stat-card {
+  background: #222;
+  border-radius: 12px;
+  padding: 20px;
+  text-align: center;
+  box-shadow: 0 0 15px rgba(0,0,0,0.5);
+  transition: transform 0.3s, box-shadow 0.3s;
+}
+
+.stat-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 0 25px rgba(0,0,0,0.7);
+}
+
+.stat-card h3 {
+  font-size: 14px;
+  color: #94a3b8;
+  margin-bottom: 10px;
+  letter-spacing: 0.5px;
+}
+
+.stat-card p {
+  font-size: 28px;
+  font-weight: bold;
+  color: #22c55e;
+}
+
+/* ================= SONG TABLE ================= */
+.table-box {
+  background: #222;
+  border-radius: 12px;
+  padding: 20px;
+  overflow-x: auto;
+}
+
+.table-box h2 {
+  margin-bottom: 15px;
+  color: #1db954;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 14px;
+}
+
+thead {
+  background: #111;
+  position: sticky;
+  top: 0;
+  z-index: 1;
+}
+
+th, td {
+  padding: 12px;
+  text-align: left;
+  border-bottom: 1px solid #333;
+}
+
+th {
+  color: #38bdf8;
+}
+
+tr:hover {
+  background: #333;
+}
+
+/* Scrollbar styling */
+.table-box::-webkit-scrollbar {
+  height: 6px;
+  width: 6px;
+}
+
+.table-box::-webkit-scrollbar-thumb {
+  background: #1db954;
+  border-radius: 5px;
+}
+
+.table-box::-webkit-scrollbar-track {
+  background: #111;
+}
+
+/* ================= RESPONSIVE ================= */
+@media (max-width: 768px) {
+  .analytics-container {
+    margin-left: 0;
+    padding: 20px;
+  }
+
+  .sidebar {
+    position: relative;
+    width: 100%;
+    height: auto;
+    min-height: auto;
+    padding: 15px;
+  }
+
+  .stats {
+    grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+  }
+}
+
+
+/* ================= RESET & BASE ================= */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: 'Segoe UI', sans-serif;
+}
+
+html, body {
+  height: 100%;
+}
+
+body {
+  background: #121212;
+  color: #fff;
+}
+
+/* ================= SIDEBAR ================= */
 .sidebar {
   position: fixed;
   left: 0;
@@ -28,6 +439,155 @@ body {
   padding: 20px;
   display: flex;
   flex-direction: column;
+  z-index: 100;
+}
+
+.logo {
+  margin-bottom: 30px;
+  text-align: center;
+  font-size: 24px;
+}
+
+.sidebar ul {
+  list-style: none;
+  padding-left: 0;
+}
+
+.sidebar ul li {
+  margin-bottom: 10px;
+  border-radius: 6px;
+}
+
+.sidebar ul li a {
+  display: block;
+  padding: 12px 10px;
+  text-decoration: none;
+  color: #b3b3b3;
+  border-radius: 6px;
+  transition: background 0.3s, color 0.3s;
+}
+
+.sidebar ul li.active a,
+.sidebar ul li a:hover {
+  background: #1db954;
+  color: #000;
+}
+
+/* ================= MAIN CONTENT ================= */
+.main {
+  margin-left: 220px;
+  min-height: 100vh;
+  padding: 40px;
+  background: #181818;
+}
+
+/* ================= UPLOAD FORM ================= */
+.upload-form {
+  display: flex;
+  flex-direction: column;
+  width: 400px;
+  gap: 15px;
+  margin-top: 20px;
+  background: #222;
+  padding: 20px;
+  border-radius: 12px;
+  box-shadow: 0 0 15px rgba(0,0,0,0.5);
+}
+
+.upload-form label {
+  color: #aaa;
+  margin-top: 10px;
+}
+
+.upload-form input,
+.upload-form button {
+  padding: 12px;
+  border-radius: 6px;
+  border: 1px solid #444;
+  background: #222;
+  color: #fff;
+  transition: border 0.3s, background 0.3s;
+}
+
+.upload-form input:hover,
+.upload-form input:focus {
+  border: 1.5px solid #1db954;
+  outline: none;
+  background: #2a2a2a;
+}
+
+.upload-form button {
+  background: #1db954;
+  border: none;
+  font-weight: bold;
+  cursor: pointer;
+  margin-top: 10px;
+  transition: background 0.3s, transform 0.2s;
+}
+
+.upload-form button:hover {
+  background: #1ed760;
+  transform: scale(1.05);
+}
+
+/* ================= STATUS MESSAGE ================= */
+#status {
+  margin-top: 15px;
+  font-size: 14px;
+  color: #ff6b6b; /* Error / success color will be updated via JS */
+}
+
+/* ================= RESPONSIVE ================= */
+@media (max-width: 768px) {
+  .main {
+    margin-left: 0;
+    padding: 20px;
+  }
+
+  .upload-form {
+    width: 100%;
+  }
+
+  .sidebar {
+    position: relative;
+    width: 100%;
+    height: auto;
+    min-height: auto;
+    padding: 15px;
+  }
+}
+
+
+/* ================= RESET & BASE ================= */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: 'Segoe UI', sans-serif;
+}
+
+html, body {
+  height: 100%;
+}
+
+body {
+  background: #121212;
+  color: white;
+}
+
+/* ================= SIDEBAR ================= */
+.sidebar {
+  position: fixed;
+  left: 0;
+  top: 0;
+  width: 220px;
+  height: 100%;
+  min-height: 100vh;
+  background: #000;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  z-index: 100;
 }
 
 .logo {
@@ -60,34 +620,34 @@ body {
 }
 
 /* ================= MAIN CONTENT ================= */
-/* Leaves space for sidebar and bottom player */
-
 .main {
   margin-left: 220px;
   min-height: 100vh;
   background: #181818;
   padding: 40px;
   padding-bottom: 140px;
+  position: relative;
+  z-index: 1;
 }
 
 /* ================= NAVBAR / SEARCH ================= */
-
 .navbar input {
   width: 300px;
-  padding: 10px;
+  padding: 10px 15px;
   border-radius: 20px;
   border: none;
   outline: none;
+  background: #222;
+  color: #fff;
 }
 
 /* ================= SONG LIST ================= */
-/* Used in index, likes, search */
-
 .song-list {
   display: flex;
   gap: 20px;
   margin-top: 20px;
   flex-wrap: wrap;
+  z-index: 1;
 }
 
 .song-card {
@@ -117,9 +677,48 @@ body {
   border-color: #1ed760;
 }
 
-/* ================= PLAYER (GLOBAL) ================= */
-/* Appears on ALL pages */
+/* ================= CATEGORIES GRID ================= */
+.category-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+  gap: 20px;
+  margin-top: 20px;
+}
 
+.category-card {
+  cursor: pointer;
+  text-align: center;
+  background: #181818;
+  padding: 10px;
+  border-radius: 12px;
+  transition: 0.3s;
+}
+
+.category-card:hover {
+  background: #282828;
+  transform: scale(1.05);
+}
+
+.category-card img {
+  width: 100%;
+  height: 120px;
+  object-fit: cover;
+  border-radius: 12px;
+  border: 2px solid #1db954;
+  transition: transform 0.3s, border 0.3s;
+}
+
+.category-card img:hover {
+  transform: scale(1.05);
+  border-color: #1ed760;
+}
+
+.category-card p {
+  margin-top: 8px;
+  font-weight: bold;
+}
+
+/* ================= PLAYER (GLOBAL) ================= */
 .player {
   position: fixed;
   bottom: 0;
@@ -129,18 +728,15 @@ body {
   padding: 10px 20px;
   background: #181818;
   border-top: 1px solid rgba(255,255,255,0.05);
-
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
   gap: 8px;
-
   z-index: 1000;
 }
 
 /* ================= PLAYER INFO ================= */
-
 .song-info {
   display: flex;
   align-items: center;
@@ -148,17 +744,15 @@ body {
   text-align: center;
 }
 
-/* ================= PLAYER THUMBNAIL ================= */
-
 #playerThumbnail {
   width: 55px;
   height: 55px;
   border-radius: 50%;
   object-fit: cover;
   border: 2px solid #1db954;
+  transition: transform 0.3s linear;
 }
 
-/* Rotating animation when playing */
 @keyframes spin {
   from { transform: rotate(0deg); }
   to { transform: rotate(360deg); }
@@ -169,7 +763,6 @@ body {
 }
 
 /* ================= PLAYER CONTROLS ================= */
-
 .controls button {
   background: none;
   border: none;
@@ -189,7 +782,6 @@ body {
 }
 
 /* ================= PROGRESS BAR ================= */
-
 .progress-container {
   display: flex;
   align-items: center;
@@ -203,8 +795,6 @@ body {
 }
 
 /* ================= LIKE BUTTON ================= */
-/* Visual only — logic handled in JS */
-
 #likeBtn {
   font-size: 22px;
   cursor: pointer;
@@ -219,97 +809,7 @@ body {
   transform: scale(1.1);
 }
 
-/* ================= UPLOAD FORM ================= */
-/* Admin / upload page only */
-
-.upload-form {
-  display: flex;
-  flex-direction: column;
-  width: 400px;
-  gap: 15px;
-  margin-top: 20px;
-}
-
-.upload-form label {
-  color: #aaa;
-}
-
-.upload-form input,
-.upload-form button {
-  padding: 12px;
-  border-radius: 6px;
-  border: 1px solid #444;
-  background: #222;
-  color: #fff;
-}
-
-.upload-form input:hover,
-.upload-form input:focus {
-  border: 1.5px solid #1db954;
-  outline: none;
-}
-
-.upload-form button {
-  background: #1db954;
-  border: none;
-  font-weight: bold;
-  cursor: pointer;
-}
-
-.upload-form button:hover {
-  background: #1ed760;
-}
-
-/* ================= ADMIN TABLE ================= */
-
-.admin-table {
-  width: 100%;
-  margin-top: 20px;
-  border-collapse: collapse;
-}
-
-.admin-table th,
-.admin-table td {
-  padding: 12px;
-  border-bottom: 1px solid #333;
-}
-
-.admin-table th {
-  color: #1db954;
-}
-
-.admin-table tr:hover {
-  background: #222;
-}
-
-/* ================= CATEGORY GRID (SEARCH PAGE) ================= */
-
-.category-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
-  gap: 20px;
-  margin-top: 20px;
-}
-
-.category-card {
-  cursor: pointer;
-  text-align: center;
-}
-
-.category-card img {
-  width: 100%;
-  height: 120px;
-  object-fit: cover;
-  border-radius: 12px;
-}
-
-.category-card p {
-  margin-top: 8px;
-  font-weight: bold;
-}
-
-/* ================= RESPONSIVE SAFETY ================= */
-
+/* ================= RESPONSIVE ================= */
 @media (max-width: 768px) {
   .player {
     left: 0;
@@ -323,5 +823,98 @@ body {
     position: relative;
     width: 100%;
     height: auto;
+    min-height: auto;
   }
+
+  .navbar input {
+    width: 90%;
+  }
+}
+
+
+
+
+/* ===== GENRE MULTI SELECT (DARK THEME) ===== */
+.genre-select {
+  position: relative;
+  width: 100%;
+}
+
+.selected-genres {
+  min-height: 48px;
+  border: 2px solid #525252;
+  border-radius: 8px;
+  padding: 8px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  cursor: pointer;
+  background: rgb(33, 30, 30);
+}
+
+.selected-genres:hover {
+   border: 2px solid #30e776; 
+}
+
+.selected-genres .placeholder {
+  color: #aaa;
+  font-size: 14px;
+  line-height: 32px;
+}
+
+/* Selected genre pill */
+.genre-pill {
+  background: #525252;
+  color: #fff;
+  padding: 6px 12px;
+  border-radius: 20px;
+  font-size: 13px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  border: 1.5px solid #1db954;
+}
+
+.genre-pill span {
+  cursor: pointer;
+  font-weight: bold;
+  color: #1db954;
+}
+
+/* Dropdown */
+.genre-dropdown {
+  position: absolute;
+  width: 100%;
+  max-height: 200px;
+  overflow-y: auto;
+  background: #181818;
+  border: 2px solid #525252;
+  border-radius: 8px;
+  margin-top: 6px;
+  display: none;
+  z-index: 20;
+}
+
+/* Dropdown items */
+.genre-dropdown div {
+  padding: 12px;
+  cursor: pointer;
+  color: #fff;
+  border-bottom: 1px solid #525252;
+  font-size: 14px;
+}
+
+.genre-dropdown div:hover {
+  background: #181818;
+  color: #1db954;
+}
+
+/* Scrollbar styling */
+.genre-dropdown::-webkit-scrollbar {
+  width: 6px;
+}
+
+.genre-dropdown::-webkit-scrollbar-thumb {
+  background: #181818;
+  border-radius: 10px;
 }

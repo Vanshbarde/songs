@@ -10,9 +10,19 @@ const PORT = 5000;
 app.use(cors());
 app.use(express.json());
 
+
+// Serve uploaded files
+app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
+
 // ✅ ROUTES
 const songRoutes = require("./routes/songs");
 const likesRoutes = require("./routes/likes");
+app.use("/api/analytics", require("./routes/analytics"));
+app.use("/api/plays", require("./routes/plays"));
+
+
+console.log("Likes route is:", likesRoutes);
+
 
 app.use("/api/songs", songRoutes);
 app.use("/api/likes", likesRoutes);

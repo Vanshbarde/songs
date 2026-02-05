@@ -1,3 +1,7 @@
+
+console.log("🔥 search.js loaded");
+
+
 const searchInput = document.getElementById("searchInput");
 const songContainer = document.getElementById("allSongs");
 
@@ -20,7 +24,7 @@ function renderSongs(songs) {
     card.className = "song-card";
 
     card.innerHTML = `
-      <img src="${song.image_url}">
+      <img src="http://localhost:5000${song.image_url}">
       <h4>${song.title}</h4>
       <p>${song.artist}</p>
     `;
@@ -33,7 +37,6 @@ function renderSongs(songs) {
   });
 }
 
-
 /* ========== SEARCH FILTER ========== */
 searchInput.addEventListener("input", () => {
   const value = searchInput.value.toLowerCase();
@@ -43,12 +46,11 @@ searchInput.addEventListener("input", () => {
     song.artist.toLowerCase().includes(value)
   );
 
+  console.log("Search value:", value);
+  console.log("All songs:", allSongs.map(s => s.title));
+  console.log("Filtered:", filtered.map(s => s.title));
+
   renderSongs(filtered);
 });
-card.onclick = () => {
-  currentSongId = song.id;
-  audio.src = song.audio_url;
-  nowPlaying.innerHTML = `Now Playing: <strong>${song.title}</strong>`;
-  playerThumbnail.src = song.image_url;
-  playSong();
-};
+
+

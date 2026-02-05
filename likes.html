@@ -5,9 +5,8 @@
   <title>Liked Songs</title>
   <link rel="stylesheet" href="css/style.css">
 </head>
-<body>
+<body class="likes-page">
 
-<!-- Sidebar (same as index.html) -->
 <div class="sidebar">
   <h2 class="logo">🎵 MyMusic</h2>
   <ul>
@@ -18,29 +17,20 @@
   </ul>
 </div>
 
-<!-- Main Content -->
 <div class="main">
-
-  <!-- Search Bar -->
   <div class="navbar">
-    <input
-      type="text"
-      id="searchInput"
-      placeholder="Search liked songs..."
-    >
+    <input id="searchInput" placeholder="Search liked songs...">
+<div id="allSongs"></div>
+
   </div>
 
   <h2>❤️ Liked Songs</h2>
-
-  <!-- Songs -->
   <div class="song-list"></div>
-
 </div>
-<!-- GLOBAL PLAYER (SHARED) -->
-<div class="player">
 
+<div class="player">
   <div class="song-info">
-    <img id="playerThumbnail" src="" alt="Song Thumbnail">
+    <img id="playerThumbnail">
     <p id="nowPlaying">Now Playing: <strong>None</strong></p>
   </div>
 
@@ -56,23 +46,11 @@
     <input type="range" id="progressBar" value="0">
     <span id="duration">0:00</span>
   </div>
-
 </div>
 
-<!-- ✅ LOAD GLOBAL PLAYER FIRST -->
 <script src="js/script.js"></script>
-
-<!-- ✅ THEN PAGE LOGIC -->
 <script src="js/likes.js"></script>
-
-<script>
-  const sidebarLinks = document.querySelectorAll('.sidebar ul li a');
-  sidebarLinks.forEach(link => {
-    if (link.href === window.location.href) {
-      link.parentElement.classList.add('active');
-    }
-  });
-</script>
+<script src="js/search.js"></script>
 
 
 </body>

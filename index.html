@@ -24,7 +24,9 @@
   
   <!-- Navbar -->
   <div class="navbar">
-    <input type="text" placeholder="Search songs...">
+   <input id="searchInput" placeholder="Search songs...">
+<div id="allSongs"></div>
+
   </div>
 
   <!-- Songs Section -->
@@ -84,14 +86,6 @@
 
 
 
-
-
-
-
-
-
-
-<script src="js/script.js"></script>
 <script>
 // Automatically highlight current page in sidebar
 const sidebarLinks = document.querySelectorAll('.sidebar ul li a');
@@ -104,8 +98,10 @@ sidebarLinks.forEach(link => {
 
 
 
-<script src="js/player.js"></script>
+<script src="js/script.js"></script>
+<script src="js/search.js"></script>
 
+<audio id="audio"></audio>
 
 </body>
 

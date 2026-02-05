@@ -10,28 +10,62 @@
 <!-- Sidebar -->
 <div class="sidebar">
   <h2 class="logo">🎵 MyMusic</h2>
- <ul>
-  <li><a href="index.html">Home</a></li>
-  <li>Search</li>
-  <li>Liked Songs</li>
-  <li class="active">Upload</li>
-</ul>
-    <!-- <li><a href="admin.html">Admin</a></li> -->
-
+  <ul>
+    <li><a href="admin.html">Home</a></li>
+    <li class="active"><a href="upload.html">Upload Song</a></li>
+    <li><a href="analytics.html">Analytics</a></li>
+    <li><a href="index.html">User View</a></li>
+  </ul>
 </div>
 
 <!-- Main Content -->
 <div class="main">
-
   <h2>Upload New Song</h2>
 
   <form id="uploadForm" class="upload-form">
     <input type="text" name="title" placeholder="Song Title" required>
     <input type="text" name="artist" placeholder="Artist" required>
-    <input type="text" name="genre" placeholder="Genre" required>
+
+    <label>Genres</label>
+
+<div class="genre-select">
+  <div class="selected-genres" id="selectedGenres">
+    <span class="placeholder">Select genres</span>
+  </div>
+
+  <div class="genre-dropdown" id="genreDropdown">
+    <div data-value="Pop">Pop</div>
+    <div data-value="Romantic">Romantic</div>
+    <div data-value="Indie">Indie</div>
+    <div data-value="Acoustic">Acoustic</div>
+    <div data-value="Love Song">Love Song</div>
+    <div data-value="Soft Rock">Soft Rock</div>
+    <div data-value="Ballad">Ballad</div>
+    <div data-value="Chill">Chill</div>
+    <div data-value="Emotional">Emotional</div>
+    <div data-value="Storytelling">Storytelling</div>
+    <div data-value="Folk">Folk</div>
+    <div data-value="Lo-Fi">Lo-Fi</div>
+  </div>
+</div>
+
+<!-- hidden input sent to backend -->
+<input type="hidden" name="genre" id="genreInput" required>
+
+
+
+    <!-- ✅ NEW DURATION FIELD -->
+    <input
+      type="number"
+      name="duration"
+      placeholder="Duration (in seconds, e.g. 210)"
+      min="1"
+      required
+    >
 
     <label>Song File (mp3)</label>
-    <input type="file" name="song" accept="audio/*" required>
+    <input type="file" name="audio" accept="audio/*" required>
+
 
     <label>Cover Image</label>
     <input type="file" name="image" accept="image/*" required>
@@ -40,7 +74,6 @@
   </form>
 
   <p id="status"></p>
-
 </div>
 
 <script src="js/upload.js"></script>
