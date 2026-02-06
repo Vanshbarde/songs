@@ -111,24 +111,56 @@ Storytelling, Folk, Lo‑Fi
 ```
 mini_spotify/
 │
-├── frontend/
-│   ├── index.html
-│   ├── likes.html
-│   ├── search.html
-│   ├── css/
-│   │   └── style.css
-│   └── js/
-│       ├── script.js
-│       ├── search.js
-│       ├── likes.js
-│       └── upload.js
-│
 ├── backend/
-│   ├── server.js
+│   ├── node_modules/
 │   ├── routes/
-│   └── uploads/
+│   │   ├── admin.js
+│   │   ├── analytics.js
+│   │   ├── likes.js
+│   │   ├── plays.js
+│   │   └── songs.js
+│   │
+│   ├── uploads/
+│   │   ├── images/
+│   │   ├── songs/
+│   │   ├── *.mp3
+│   │   └── *.jpg / *.jpeg
+│   │
+│   ├── db.js
+│   ├── server.js
+│   ├── package.json
+│   └── package-lock.json
 │
-└── README.md
+├── css/
+│   └── style.css
+│
+├── js/
+│   ├── admin.js
+│   ├── likes.js
+│   ├── player.js
+│   ├── script.js
+│   ├── search.js
+│   └── upload.js
+│
+├── For_Git/
+│   ├── first.png
+│   └── second.png
+│
+├── node_modules/
+│
+├── admin.html
+├── analytics.html
+├── database.sql
+├── index.html
+├── likes.html
+├── search.html
+├── upload.html
+│
+├── .gitignore
+├── package-lock.json
+├── readme.md
+└── requirements.txt
+
 ```
 
 ---
