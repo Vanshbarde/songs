@@ -77,13 +77,13 @@ Storytelling, Folk, Lo‑Fi
 
 ## 🖼️ Project Preview
 
-> Example preview image (replace with your own screenshot):
 
 ```md
-![Mini Spotify Preview](For_Git/first.png)
+![Mini Spotify Preview 1](For_Git/first.png)
+```
+![Mini Spotify Preview 2](For_Git/second.png)
 ```
 
-Make sure the image exists inside the `assets/` folder.
 
 ---
 

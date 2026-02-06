@@ -1,0 +1,5 @@
+Node.js >= 18
+Express.js
+PostgreSQL
+Multer
+CORS
